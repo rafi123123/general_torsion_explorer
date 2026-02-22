@@ -16,8 +16,6 @@ def trefoil_example():
     print(trefoil.reduce(word_to_identity) == trefoil.identity) # True
     print(trefoil.reduce(rel_identity) == trefoil.identity) # True
 
-
-
 def figure_eight_example():
     fig8_relations = [
         "x_0 * x_2 * x_0**-1 * x_1**-1",
@@ -37,7 +35,18 @@ def figure_eight_example():
         print(figure_eight.reduce(word) == figure_eight.identity) # True
     
     word = x_0**2 * (x_2 * x_0 * x_2**-1 * x_3**-1) * (x_2 * x_0**-1 * x_1**-1)
+    snappy_words = [
+        'x_0 * x_0 * x_1 * x_1 * x_0**-1 * x_1**-1 * x_1**-1'
+    ]
     print(figure_eight.reduce(word))
+
+
+def using_snappy_example():
+    """
+    TODO
+    """
+    ...
+
 
 if __name__ == '__main__':
     print('-----------')

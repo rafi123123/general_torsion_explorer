@@ -1,3 +1,7 @@
+import warnings
+warnings.filterwarnings("ignore", message="Plink failed to import tkinter")
+
+import snappy
 from sympy.combinatorics.free_groups import free_group
 from sympy.combinatorics.fp_groups import FpGroup, simplify_presentation
 
@@ -29,3 +33,57 @@ def create_indexed_fp_group(
     
     return FpGroup(F, parsed_relations)
 
+
+def get_knot_data(limit=500):
+    #FIXME
+    knot_list = []
+    # CensusKnots contains prime knots from the Rolfsen and HT tables
+    for k in snappy.CensusKnots[1:limit]:
+        # Get the fundamental group
+        G = k.fundamental_group()
+        
+        # SnapPy naming is usually 'a, b, c...'
+        # We can map these to your x_0, x_1... format
+        num_gens = G.num_generators()
+        relations = []
+        
+        for rel in G.relators():
+            # SnapPy relators are strings like 'abCB' (Capital = inverse)
+            # We convert these to your x_0 * x_1**-1 format
+            # print('--------------------')
+            # print(rel)
+            # print('--------------------')
+            formatted_rel = format_snappy_rel(rel, num_gens)
+            relations.append(formatted_rel)
+            
+        knot_list.append({
+            "name": k.name(),
+            "generators": num_gens,
+            "relations": relations
+        })
+    return knot_list
+
+def format_snappy_rel(rel_str, num_gens):
+    #FIXME
+    # Mapping 'a'->x_0, 'b'->x_1, 'A'->x_0**-1, etc.
+    components = []
+    for char in rel_str:
+        idx = ord(char.lower()) - ord('a')
+        if char.isupper():
+            components.append(f"x_{idx}**-1")
+        else:
+            components.append(f"x_{idx}")
+    return " * ".join(components)
+
+# if __name__ == '__main__':
+    # Usage
+    # j = 4
+    # data = get_knot_data(j)
+    # for entry in data:
+    #     print(entry)
+    # print(f"Retrieved {len(data)} knots.")
+    # for entry in data:
+    #     if len(entry['relations']) > 1:
+    #         print(entry)
+    #     # if entry['generators'] > 2:
+    #     #     print(entry)
