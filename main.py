@@ -50,10 +50,7 @@ def get_knot_data(limit=500):
         for rel in G.relators():
             # SnapPy relators are strings like 'abCB' (Capital = inverse)
             # We convert these to your x_0 * x_1**-1 format
-            # print('--------------------')
-            # print(rel)
-            # print('--------------------')
-            formatted_rel = format_snappy_rel(rel, num_gens)
+            formatted_rel = format_snappy_rel(rel)
             relations.append(formatted_rel)
             
         knot_list.append({
@@ -63,8 +60,7 @@ def get_knot_data(limit=500):
         })
     return knot_list
 
-def format_snappy_rel(rel_str, num_gens):
-    #FIXME
+def format_snappy_rel(rel_str):
     # Mapping 'a'->x_0, 'b'->x_1, 'A'->x_0**-1, etc.
     components = []
     for char in rel_str:

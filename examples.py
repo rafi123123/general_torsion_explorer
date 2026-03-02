@@ -17,11 +17,16 @@ def trefoil_example():
     print(trefoil.reduce(rel_identity) == trefoil.identity) # True
 
 def figure_eight_example():
+    """
+    there exists a way to collapse this group to
+    only two generators and one relationship.
+    """
     fig8_relations = [
         "x_0 * x_2 * x_0**-1 * x_1**-1",
         "x_3 * x_1 * x_3**-1 * x_2**-1",
         "x_2 * x_0 * x_2**-1 * x_3**-1"
     ] # all the figure eight knot relationships
+
     figure_eight = create_indexed_fp_group(4, fig8_relations)
     x_0, x_1, x_2, x_3 = figure_eight.generators
 
@@ -35,9 +40,6 @@ def figure_eight_example():
         print(figure_eight.reduce(word) == figure_eight.identity) # True
     
     word = x_0**2 * (x_2 * x_0 * x_2**-1 * x_3**-1) * (x_2 * x_0**-1 * x_1**-1)
-    snappy_words = [
-        'x_0 * x_0 * x_1 * x_1 * x_0**-1 * x_1**-1 * x_1**-1'
-    ]
     print(figure_eight.reduce(word))
 
 
