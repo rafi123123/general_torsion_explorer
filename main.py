@@ -2,7 +2,7 @@ import warnings
 warnings.filterwarnings("ignore", message="Plink failed to import tkinter")
 import snappy
 from dataclasses import dataclass
-from sympy.combinatorics.free_groups import free_group
+from sympy.combinatorics.free_groups import free_group, FreeGroupElement
 from sympy.combinatorics.fp_groups import FpGroup
 
 def create_indexed_fp_group(
@@ -74,3 +74,34 @@ def format_snappy_rel(rel_str: str) -> str:
         else:
             components.append(f"x_{idx}")
     return " * ".join(components)
+
+
+def sum_absolute_exponents(word: FreeGroupElement) -> int:
+    """
+    Takes a SymPy word (FreeGroupElement or similar) and returns the sum of 
+    absolute values of all exponents in the word.
+    
+    For example, x_0 * x_1**(-2) * x_0**3 would return |1| + |-2| + |3| = 6
+    """
+    if hasattr(word, 'array_form'):
+        # array_form is a list of tuples: [(generator_index, exponent), ...]
+        return sum(abs(exponent) for _, exponent in word.array_form)
+    else:
+        raise ValueError("Input must be a SymPy word-like object with array_form attribute")
+
+def create_conjugate_multiplication(g, *words):
+    """
+    creates the word: w1*g*w1**-1 * ... *wn*g*wn**-1
+    """
+
+    if len(words) == 0:
+        raise ValueError("at least one word should be provided after the general_torsion_element")
+    ret_word = g**0
+    for word in words:
+        ret_word = ret_word * word * g * word**-1
+    return ret_word
+
+
+
+if __name__ == '__main__':
+    pass

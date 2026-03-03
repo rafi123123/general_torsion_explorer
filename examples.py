@@ -1,4 +1,9 @@
-from main import create_indexed_fp_group, get_knot_data
+from main import (
+    create_indexed_fp_group, 
+    get_knot_data, 
+    sum_absolute_exponents,
+    create_conjugate_multiplication
+)
 
 def free_group():
     free_group = create_indexed_fp_group(4)
@@ -62,6 +67,60 @@ def using_snappy_knot_data():
     print(knot.relators)
 
 
+def test_sum_absolute_exponents():
+    """
+    Test the sum_absolute_exponents function with various word examples.
+    """
+    print("Testing sum_absolute_exponents function:")
+    print("-" * 50)
+    
+    # Create an indexed FP group with 3 generators
+    fp_group = create_indexed_fp_group(3)
+    
+    # Extract generators from the group
+    F = fp_group.free_group
+    x0, x1, x2 = F.generators
+    
+    # Test case 1: Simple word with positive exponents
+    word1 = x0 * x1 * x2
+    result1 = sum_absolute_exponents(word1)
+    print(f"Word: {word1}")
+    print(f"Sum of absolute exponents: {result1}")
+    print(f"Expected: 3 (|1| + |1| + |1|)")
+    print()
+    
+    # Test case 2: Word with negative exponents
+    word2 = x0 * x1**(-2) * x0**3
+    result2 = sum_absolute_exponents(word2)
+    print(f"Word: {word2}")
+    print(f"Sum of absolute exponents: {result2}")
+    print(f"Expected: 6 (|1| + |-2| + |3|)")
+    print()
+    
+    # Test case 3: Word with larger exponents
+    word3 = x0**(-4) * x2**5 * x1**(-1)
+    result3 = sum_absolute_exponents(word3)
+    print(f"Word: {word3}")
+    print(f"Sum of absolute exponents: {result3}")
+    print(f"Expected: 10 (|-4| + |5| + |-1|)")
+    print()
+    
+    # Test case 4: Single generator with high exponent
+    word4 = x1**7
+    result4 = sum_absolute_exponents(word4)
+    print(f"Word: {word4}")
+    print(f"Sum of absolute exponents: {result4}")
+    print(f"Expected: 7 (|7|)")
+
+
+def test_conjigate_maker():
+    knot_data = get_knot_data(0)
+    knot = create_indexed_fp_group(knot_data.num_gens, knot_data.relations)
+    x_0, x_1 = knot.generators
+    print(create_conjugate_multiplication(x_0, x_1))
+    print(create_conjugate_multiplication(x_0, x_1, x_0**2*x_1))
+
+
 if __name__ == '__main__':
     # print('-----trefoil_example()------')
     # trefoil_example()
@@ -71,6 +130,12 @@ if __name__ == '__main__':
     # figure_eight_example()
     # print('----knuth_bendix_reduction_algorithm()-------')
     # knuth_bendix_reduction_algorithm()
-    print('------using_snappy_knot_data()-----')
-    using_snappy_knot_data()
+    # print('------using_snappy_knot_data()-----')
+    # using_snappy_knot_data()
+    # print('-----------')
+    # print('------test_sum_absolute_exponents()-----')
+    # test_sum_absolute_exponents()
+    # print('-----------')
+    print('------test_conjigate_maker()-----')
+    test_conjigate_maker()
     print('-----------')
