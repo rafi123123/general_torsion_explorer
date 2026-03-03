@@ -1,14 +1,14 @@
 import warnings
 warnings.filterwarnings("ignore", message="Plink failed to import tkinter")
-
 import snappy
+from dataclasses import dataclass
 from sympy.combinatorics.free_groups import free_group
-from sympy.combinatorics.fp_groups import FpGroup, simplify_presentation
+from sympy.combinatorics.fp_groups import FpGroup
 
 def create_indexed_fp_group(
         num_generators: int, 
         relation_strings:list[str] | None = None
-    ):
+    ) -> FpGroup:
     """
     Creates an FpGroup with generators named x_0, x_1, ... x_{n-1}.
     if no relation_strings are given then the free group is generated
@@ -34,33 +34,37 @@ def create_indexed_fp_group(
     return FpGroup(F, parsed_relations)
 
 
-def get_knot_data(limit=500):
-    #FIXME
-    knot_list = []
-    # CensusKnots contains prime knots from the Rolfsen and HT tables
-    for k in snappy.CensusKnots[1:limit]:
-        # Get the fundamental group
-        G = k.fundamental_group()
-        
-        # SnapPy naming is usually 'a, b, c...'
-        # We can map these to your x_0, x_1... format
-        num_gens = G.num_generators()
-        relations = []
-        
-        for rel in G.relators():
-            # SnapPy relators are strings like 'abCB' (Capital = inverse)
-            # We convert these to your x_0 * x_1**-1 format
-            formatted_rel = format_snappy_rel(rel)
-            relations.append(formatted_rel)
-            
-        knot_list.append({
-            "name": k.name(),
-            "generators": num_gens,
-            "relations": relations
-        })
-    return knot_list
+@dataclass
+class KnotData:
+    name: str
+    num_gens:int
+    relations: list[str]
 
-def format_snappy_rel(rel_str):
+def get_knot_data(indentifier: int | str) -> KnotData:  
+    """
+    get knot data using an index or the identifier using the Rolfsen Notation
+    """
+    manifold: snappy.Manifold = snappy.LinkExteriors[indentifier]
+    G = manifold.fundamental_group()
+    
+    # SnapPy naming is usually 'a, b, c...'
+    # We can map these to your x_0, x_1... format
+    num_gens = G.num_generators()
+    relations = []
+    
+    for rel in G.relators():
+        # SnapPy relators are strings like 'abCB' (Capital = inverse)
+        # We convert these to your x_0 * x_1**-1 format
+        formatted_rel = format_snappy_rel(rel)
+        relations.append(formatted_rel)
+        
+    return KnotData(
+        name=manifold.name(),
+        num_gens=num_gens,
+        relations=relations
+    ) 
+
+def format_snappy_rel(rel_str: str) -> str:
     # Mapping 'a'->x_0, 'b'->x_1, 'A'->x_0**-1, etc.
     components = []
     for char in rel_str:
@@ -70,16 +74,3 @@ def format_snappy_rel(rel_str):
         else:
             components.append(f"x_{idx}")
     return " * ".join(components)
-
-# if __name__ == '__main__':
-    # Usage
-    # j = 4
-    # data = get_knot_data(j)
-    # for entry in data:
-    #     print(entry)
-    # print(f"Retrieved {len(data)} knots.")
-    # for entry in data:
-    #     if len(entry['relations']) > 1:
-    #         print(entry)
-    #     # if entry['generators'] > 2:
-    #     #     print(entry)
