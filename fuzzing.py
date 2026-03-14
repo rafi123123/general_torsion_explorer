@@ -9,6 +9,9 @@ from pathlib import Path
 import os
 from dataclasses import dataclass, asdict
 from datetime import datetime
+from pprint import pprint
+import atexit
+
 @dataclass
 class CsvData:
     knot_name_or_index: str | int | None = None
@@ -17,6 +20,7 @@ class CsvData:
     words: str | None = None
     exponent_summation_pre_reduction: int | None = None
     exponent_summation_post_reduction: int | None = None
+    exponenet_diff_reduction: int | None = None
     torsion_length: int | None = None
     amount_of_words: int | None = None
     max_torsion_element_length: int | None = None
@@ -40,6 +44,16 @@ def knot_torsion_random_fuzzer(
         min_amount_of_words: int = 2,
 
     ) -> None:
+
+    maximal_exponent_sum_diff = CsvData(exponenet_diff_reduction=-1)
+    
+    def cleanup():
+        print(f"-----------------maximal exponent diff--------------")
+        pprint(maximal_exponent_sum_diff,indent=4)
+        print('-------------------------------------------')
+    atexit.register(cleanup)
+
+
     filename = Path(__file__).parent/'generated_data'/f'{knot_name_or_index}-{output_filename}.csv'
     file_exists = os.path.isfile(filename) and os.stat(filename).st_size > 0
     with open(filename, mode='a', newline='') as file:
@@ -90,6 +104,10 @@ def knot_torsion_random_fuzzer(
             csv_data.exponent_summation_post_reduction = sum_absolute_exponents(
                     knot.fpgroup.reduce(csv_data.conjugate_multiple)
                 )
+            csv_data.exponenet_diff_reduction = \
+                csv_data.exponent_summation_pre_reduction - csv_data.exponent_summation_post_reduction
+            if csv_data.exponenet_diff_reduction > maximal_exponent_sum_diff.exponenet_diff_reduction:
+                maximal_exponent_sum_diff = csv_data
 
             writer.writerow(asdict(csv_data))
             
@@ -98,4 +116,4 @@ def knot_torsion_random_fuzzer(
         
         
 if __name__ == '__main__':
-    knot_torsion_random_fuzzer('4_1', output_filename='figure_eight_spamming', fuzzing_limit=10000)
+    knot_torsion_random_fuzzer('6_2', output_filename='initial', fuzzing_limit=10000)
