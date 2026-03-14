@@ -1,2 +1,3 @@
 .git/**
 venv/**
+generated_data

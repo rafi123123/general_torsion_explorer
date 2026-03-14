@@ -61,10 +61,9 @@ def knuth_bendix_reduction_algorithm():
     print(test_knot.reduce(word))
 
 def using_snappy_knot_data():
-    knot_data = get_knot_data(0)
-    print(knot_data.relations)
-    knot = create_indexed_fp_group(knot_data.num_gens, knot_data.relations)
-    print(knot.relators)
+    knot = get_knot_data(0)
+    print(knot.relations)
+    print(knot.fpgroup.relators)
 
 
 def test_sum_absolute_exponents():
@@ -114,11 +113,10 @@ def test_sum_absolute_exponents():
 
 
 def test_conjigate_maker():
-    knot_data = get_knot_data(0)
-    knot = create_indexed_fp_group(knot_data.num_gens, knot_data.relations)
+    knot = get_knot_data(0).fpgroup
     x_0, x_1 = knot.generators
-    print(create_conjugate_multiplication(x_0, x_1))
-    print(create_conjugate_multiplication(x_0, x_1, x_0**2*x_1))
+    print(create_conjugate_multiplication(x_0, [x_1]))
+    print(create_conjugate_multiplication(x_0, [x_1, x_0**2*x_1]))
 
 
 if __name__ == '__main__':

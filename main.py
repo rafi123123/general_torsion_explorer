@@ -39,6 +39,7 @@ class KnotData:
     name: str
     num_gens:int
     relations: list[str]
+    fpgroup: FpGroup
 
 def get_knot_data(indentifier: int | str) -> KnotData:  
     """
@@ -61,7 +62,8 @@ def get_knot_data(indentifier: int | str) -> KnotData:
     return KnotData(
         name=manifold.name(),
         num_gens=num_gens,
-        relations=relations
+        relations=relations,
+        fpgroup = create_indexed_fp_group(num_gens, relations)
     ) 
 
 def format_snappy_rel(rel_str: str) -> str:
@@ -89,7 +91,7 @@ def sum_absolute_exponents(word: FreeGroupElement) -> int:
     else:
         raise ValueError("Input must be a SymPy word-like object with array_form attribute")
 
-def create_conjugate_multiplication(g, *words):
+def create_conjugate_multiplication(g, words: list[FreeGroupElement]) -> FreeGroupElement:
     """
     creates the word: w1*g*w1**-1 * ... *wn*g*wn**-1
     """
