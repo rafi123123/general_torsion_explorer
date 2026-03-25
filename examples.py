@@ -2,7 +2,8 @@ from main import (
     create_indexed_fp_group, 
     get_knot_data, 
     sum_absolute_exponents,
-    create_conjugate_multiplication
+    create_conjugate_multiplication,
+    sum_per_generator_exponent
 )
 
 def free_group():
@@ -119,6 +120,12 @@ def test_conjigate_maker():
     print(create_conjugate_multiplication(x_0, [x_1, x_0**2*x_1]))
 
 
+def test_get_exponent_per_generator():
+    free_group = create_indexed_fp_group(4)
+    x_0, x_1, x_2, x_3 = free_group.generators
+    word = (x_0**3 * x_3**5)
+    print(sum_per_generator_exponent(word))
+
 if __name__ == '__main__':
     # print('-----trefoil_example()------')
     # trefoil_example()
@@ -134,6 +141,10 @@ if __name__ == '__main__':
     # print('------test_sum_absolute_exponents()-----')
     # test_sum_absolute_exponents()
     # print('-----------')
-    print('------test_conjigate_maker()-----')
-    test_conjigate_maker()
+    # print('------test_conjigate_maker()-----')
+    # test_conjigate_maker()
+    # print('-----------')
+    print('------test_get_exponent_per_generator()-----')
+    test_get_exponent_per_generator()
     print('-----------')
+    

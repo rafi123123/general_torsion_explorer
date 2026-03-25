@@ -91,6 +91,30 @@ def sum_absolute_exponents(word: FreeGroupElement) -> int:
     else:
         raise ValueError("Input must be a SymPy word-like object with array_form attribute")
 
+def sum_per_generator_exponent(word: FreeGroupElement) -> dict:
+    """
+    Takes a SymPy word (FreeGroupElement or similar) and returns the sum of 
+    of the exponents for each generator in the word 
+    
+    For example, x_0 * x_1**(-2) * x_0**3 would return 
+    ```json
+        {
+            "x_0": 4, 
+            "x_1": -2
+        }
+    ```
+    """
+    if hasattr(word, 'array_form'):
+        # array_form is a list of tuples: [(generator_index, exponent), ...]
+        # return {f"{generator}_exponent_sum_no_abs": exp for generator, exponent in word.array_form}
+        return_dict = {}
+        for generator, exponent in word.array_form:
+            return_dict[generator] = return_dict.get(generator, 0) + exponent
+        return return_dict
+    else:
+        raise ValueError("Input must be a SymPy word-like object with array_form attribute")
+
+
 def create_conjugate_multiplication(g, words: list[FreeGroupElement]) -> FreeGroupElement:
     """
     creates the word: w1*g*w1**-1 * ... *wn*g*wn**-1
